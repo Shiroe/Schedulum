@@ -5,6 +5,8 @@ import { withStyles } from "@material-ui/styles";
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
 
+import Calendar from "./Calendar/index";
+
 const styles = () => ({
   "@global": {
     body: {
@@ -26,7 +28,9 @@ class Home extends Component {
     const { classes } = this.props;
     return (
       <Container component="main" maxWidth="xl">
-        <Paper className={classes.paper} elevation={3}></Paper>
+        <Paper className={classes.paper} elevation={7}>
+          <Calendar />
+        </Paper>
       </Container>
     );
   }
