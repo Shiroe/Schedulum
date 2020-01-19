@@ -12,7 +12,7 @@ const styles = () => ({
     }
   },
   paper: {
-    marginTop: 20,
+    marginTop: 0,
     display: "flex",
     padding: 20,
     flexDirection: "column",
