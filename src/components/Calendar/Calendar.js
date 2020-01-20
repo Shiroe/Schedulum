@@ -6,27 +6,34 @@ import { withStyles } from "@material-ui/styles";
 
 import {
   GridList,
-  GridListTile,
-  GridListTileBar,
-  ListSubheader,
-  IconButton,
   Paper,
-  Typography
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow
 } from "@material-ui/core";
 
-import InfoIcon from "@material-ui/icons/Info";
+import Day from "./Day";
 
-const styles = theme => ({
+const styles = () => ({
   root: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-around",
-    overflow: "hidden",
-    backgroundColor: "#ccc"
+    width: "100%"
+  },
+  container: {
+    maxHeight: "94%"
+  },
+  gridListHeader: {
+    width: "100%",
+    height: "130px"
   },
   gridList: {
     width: "100%",
-    height: "auto"
+    height: "auto",
+    flexGrow: 1
   },
   icon: {
     color: "rgba(255, 255, 255, 0.54)"
@@ -40,18 +47,15 @@ const styles = theme => ({
     height: "100px",
     display: "flex",
     justifyContent: "space-between"
+  },
+  table: {
+    // maxHeight: "90%"
+  },
+  tableRow: {},
+  item: {
+    height: "125px"
   }
 });
-
-const DAYS = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday"
-];
 
 function weekDays(month, year) {
   const endDate = moment()
@@ -84,12 +88,72 @@ function weekDays(month, year) {
     }));
 }
 
+const columns = [
+  { id: "monday", label: "Monday", align: "center" },
+  { id: "tuesday", label: "Tuesday", align: "center" },
+  { id: "wednesday", label: "Wednesday", align: "center" },
+  { id: "thursday", label: "Thursday", align: "center" },
+  { id: "friday", label: "Friday", align: "center" },
+  { id: "saturday", label: "Saturday", align: "center" },
+  { id: "sunday", label: "Sunday", align: "center" }
+];
+
+const events = [
+  {
+    title: "Test event",
+    place: "Room1",
+    date: moment("2020-01-15"),
+    description: "Test sample description",
+    attendees: ["John S.", "Smith J."]
+  },
+  {
+    title: "Test event",
+    place: "Room1",
+    date: moment(),
+    description: "Test sample description",
+    attendees: ["John S.", "Smith J."]
+  },
+  {
+    title: "Test event",
+    place: "Room1",
+    date: moment(),
+    description: "Test sample description",
+    attendees: ["John S.", "Smith J."]
+  },
+  {
+    title: "Test event",
+    place: "Room1",
+    date: moment(),
+    description: "Test sample description",
+    attendees: ["John S.", "Smith J."]
+  },
+  {
+    title: "Test event",
+    place: "Room1",
+    date: moment(),
+    description: "Test sample description",
+    attendees: ["John S.", "Smith J."]
+  }
+];
+
 class Calendar extends React.Component {
   constructor() {
     super();
 
     window.moment = moment;
+
+    this.state = {
+      page: 0,
+      rowsPerPage: 5
+    };
+
+    this.handleChangePage = this.handleChangePage.bind(this);
   }
+
+  handleChangePage(ev, page) {
+    this.setState({ page });
+  }
+
   calendar() {
     const weeks = weekDays(moment().month(), moment().year());
     const days = [
@@ -100,32 +164,64 @@ class Calendar extends React.Component {
       ...weeks[4].days
     ];
     console.log(days);
-    return days;
+    return weeks;
   }
 
   render() {
     const { classes } = this.props;
-    const days = this.calendar();
+    const { page, rowsPerPage } = this.state;
+    const weeks = this.calendar();
 
     return (
       <React.Fragment>
-        <div className={classes.header}>
-          <Typography>January</Typography>
-        </div>
-        <GridList cellHeight={180} cols={7} className={classes.gridList}>
-          {days.map(d => (
-            <Paper
-              key={d.dayOfYear()}
-              className={classes.tile}
-              component="div"
-              elevation={2}
-            >
-              <Typography>{d.format("D")}</Typography>
-              <Typography>{d.format("dddd")}</Typography>
-              {/* <GridListTileBar title={d.format("dddd")} /> */}
-            </Paper>
-          ))}
-        </GridList>
+        <TableContainer className={classes.container}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                {columns.map(column => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    style={{ minWidth: column.minWidth }}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody className={classes.table}>
+              {weeks
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map(week => {
+                  return (
+                    <TableRow
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={week.week}
+                      className={classes.tableRow}
+                    >
+                      {week.days.map(day => {
+                        return (
+                          <TableCell
+                            key={day.id}
+                            align={day.align}
+                            className={classes.item}
+                          >
+                            <Day
+                              key={day.dayOfYear()}
+                              date={day}
+                              events={[]}
+                              isCurrentMonth={day.month() === moment().month()}
+                            />
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </React.Fragment>
     );
   }

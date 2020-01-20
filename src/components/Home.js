@@ -16,10 +16,9 @@ const styles = () => ({
   paper: {
     marginTop: 0,
     display: "flex",
-    padding: 20,
     flexDirection: "column",
     alignItems: "center",
-    height: "90vh"
+    height: "88vh"
   }
 });
 
@@ -28,7 +27,7 @@ class Home extends Component {
     const { classes } = this.props;
     return (
       <Container component="main" maxWidth="xl">
-        <Paper className={classes.paper} elevation={7}>
+        <Paper className={classes.paper} elevation={4}>
           <Calendar />
         </Paper>
       </Container>
