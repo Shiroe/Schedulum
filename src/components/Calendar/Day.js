@@ -14,7 +14,8 @@ const styles = () => ({
     "&:hover": {
       backgroundColor: "#eee",
       cursor: "pointer"
-    }
+    },
+    padding: 0
   },
   title: {
     fontSize: 18

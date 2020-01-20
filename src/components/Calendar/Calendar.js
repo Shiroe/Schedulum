@@ -5,15 +5,11 @@ import moment from "moment";
 import { withStyles } from "@material-ui/styles";
 
 import {
-  GridList,
-  Paper,
-  Typography,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow
 } from "@material-ui/core";
 
@@ -24,7 +20,7 @@ const styles = () => ({
     width: "100%"
   },
   container: {
-    maxHeight: "94%"
+    maxHeight: "100%"
   },
   gridListHeader: {
     width: "100%",
@@ -48,12 +44,9 @@ const styles = () => ({
     display: "flex",
     justifyContent: "space-between"
   },
-  table: {
-    // maxHeight: "90%"
-  },
-  tableRow: {},
   item: {
-    height: "125px"
+    height: "150px",
+    padding: 0
   }
 });
 
@@ -156,14 +149,6 @@ class Calendar extends React.Component {
 
   calendar() {
     const weeks = weekDays(moment().month(), moment().year());
-    const days = [
-      ...weeks[0].days,
-      ...weeks[1].days,
-      ...weeks[2].days,
-      ...weeks[3].days,
-      ...weeks[4].days
-    ];
-    console.log(days);
     return weeks;
   }
 
@@ -189,21 +174,16 @@ class Calendar extends React.Component {
                 ))}
               </TableRow>
             </TableHead>
-            <TableBody className={classes.table}>
+            <TableBody>
               {weeks
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(week => {
                   return (
-                    <TableRow
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={week.week}
-                      className={classes.tableRow}
-                    >
+                    <TableRow role="checkbox" tabIndex={-1} key={week.week}>
                       {week.days.map(day => {
                         return (
                           <TableCell
-                            key={day.id}
+                            key={day.dayOfYear()}
                             align={day.align}
                             className={classes.item}
                           >
