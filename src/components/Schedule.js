@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { db, myFirebase } from "../firebase/firebase";
 import PropTypes from "prop-types";
 
 import moment from "moment";
@@ -67,7 +68,7 @@ class Schedule extends Component {
     this.state = {
       title: title,
       place: place,
-      attendees: users.find(u => u.id === user.id),
+      attendees: [], //users.find(u => u.id === user.id),
       description: description,
       date: date ? moment(date) : null
     };
@@ -90,9 +91,46 @@ class Schedule extends Component {
     this.setState({ attendees });
   }
 
-  handleSubmit() {
+  async handleSubmit() {
     const { title, description, place, date, attendees } = this.state;
-    console.log(title, description, place, date.toLocaleString(), attendees);
+    const { user } = this.props;
+    // console.log(title, description, place, date.toLocaleString(), attendees);
+    const startDate = moment("10/01/2020", "DD/MM/YYYY");
+    const endDate = moment().endOf("month");
+    console.log(
+      "asd: ",
+      user.uid,
+      " sd:",
+      startDate.format("DD/MM/YYYY"),
+      " ed:",
+      endDate.format("DD/MM/YYYY")
+    );
+    const params = {
+      title,
+      description,
+      place,
+      date: new Date(date),
+      attendees
+    };
+
+    if (title && description && place && date) {
+      db.collection("events")
+        .add({
+          title,
+          description,
+          place,
+          date: new Date(date),
+          attendees
+        })
+        .then(function(docRef) {
+          console.log("Document written with ID: ", docRef.id);
+        })
+        .catch(function(error) {
+          console.error("Error adding document: ", error);
+        });
+    }
+
+    console.log("After query");
   }
 
   render() {
@@ -228,6 +266,7 @@ Schedule.propTypes = {
 
 function mapStateToProps(state) {
   return {
+    user: state.auth.user,
     isLoggingOut: state.auth.isLoggingOut,
     logoutError: state.auth.logoutError
   };

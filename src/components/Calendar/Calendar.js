@@ -2,7 +2,9 @@ import React from "react";
 import { connect } from "react-redux";
 
 import moment from "moment";
+import { weekDays } from "../../utils/dateUtils";
 import { withStyles } from "@material-ui/styles";
+import { calendarStyles as styles } from "./styles";
 
 import {
   Table,
@@ -15,72 +17,6 @@ import {
 
 import Day from "./Day";
 
-const styles = () => ({
-  root: {
-    width: "100%"
-  },
-  container: {
-    maxHeight: "100%"
-  },
-  gridListHeader: {
-    width: "100%",
-    height: "130px"
-  },
-  gridList: {
-    width: "100%",
-    height: "auto",
-    flexGrow: 1
-  },
-  icon: {
-    color: "rgba(255, 255, 255, 0.54)"
-  },
-  tile: {
-    padding: "5px !important",
-    border: "1px solid #eee",
-    backgroundColor: "#fff"
-  },
-  header: {
-    height: "100px",
-    display: "flex",
-    justifyContent: "space-between"
-  },
-  item: {
-    height: "150px",
-    padding: 0
-  }
-});
-
-function weekDays(month, year) {
-  const endDate = moment()
-    .date(0)
-    .month(month)
-    .year(year);
-
-  return Array(endDate.date())
-    .fill(0)
-    .map((_, i) =>
-      moment()
-        .date(i + 1)
-        .month(month)
-        .year(year)
-    )
-    .map(day => ({ day, week: day.week() }))
-    .filter(
-      ({ week }, i, arr) => arr.findIndex(info => info.week === week) === i
-    )
-    .map(({ day, week }) => ({
-      week,
-      days: Array(7)
-        .fill(0)
-        .map((_, i) =>
-          moment(day)
-            .week(week)
-            .startOf("week")
-            .add(i, "day")
-        )
-    }));
-}
-
 const columns = [
   { id: "monday", label: "Monday", align: "center" },
   { id: "tuesday", label: "Tuesday", align: "center" },
@@ -89,44 +25,6 @@ const columns = [
   { id: "friday", label: "Friday", align: "center" },
   { id: "saturday", label: "Saturday", align: "center" },
   { id: "sunday", label: "Sunday", align: "center" }
-];
-
-const events = [
-  {
-    title: "Test event",
-    place: "Room1",
-    date: moment("2020-01-15"),
-    description: "Test sample description",
-    attendees: ["John S.", "Smith J."]
-  },
-  {
-    title: "Test event",
-    place: "Room1",
-    date: moment(),
-    description: "Test sample description",
-    attendees: ["John S.", "Smith J."]
-  },
-  {
-    title: "Test event",
-    place: "Room1",
-    date: moment(),
-    description: "Test sample description",
-    attendees: ["John S.", "Smith J."]
-  },
-  {
-    title: "Test event",
-    place: "Room1",
-    date: moment(),
-    description: "Test sample description",
-    attendees: ["John S.", "Smith J."]
-  },
-  {
-    title: "Test event",
-    place: "Room1",
-    date: moment(),
-    description: "Test sample description",
-    attendees: ["John S.", "Smith J."]
-  }
 ];
 
 class Calendar extends React.Component {

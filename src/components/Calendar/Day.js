@@ -4,26 +4,9 @@ import PropTypes from "prop-types";
 
 import moment from "moment";
 import { withStyles } from "@material-ui/styles";
+import { calendarDayStyles as styles } from "./styles";
 
 import { Typography, Card, CardContent } from "@material-ui/core";
-
-const styles = () => ({
-  card: {
-    minWidth: 100,
-    border: 0,
-    "&:hover": {
-      backgroundColor: "#eee",
-      cursor: "pointer"
-    },
-    padding: 0
-  },
-  title: {
-    fontSize: 18
-  },
-  pos: {
-    marginBottom: 12
-  }
-});
 
 function Day({ classes, date, events, isCurrentMonth }) {
   return (
