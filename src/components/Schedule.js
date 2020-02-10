@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { db, myFirebase } from "../firebase/firebase";
 import PropTypes from "prop-types";
 
 import moment from "moment";
@@ -22,6 +21,8 @@ import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Container from "@material-ui/core/Container";
 import InsertInvitationOutlinedIcon from "@material-ui/icons/InsertInvitationOutlined";
+
+import { createEvent, updateEvent } from "../actions";
 
 const styles = () => ({
   "@global": {
@@ -63,14 +64,15 @@ class Schedule extends Component {
   constructor(props) {
     super(props);
 
-    const { date, title, description, place, users, user } = this.props;
+    const { date, title, description, place } = this.props;
 
     this.state = {
+      mode: "create",
       title: title,
       place: place,
-      attendees: [], //users.find(u => u.id === user.id),
+      attendees: [], //TODO,
       description: description,
-      date: date ? moment(date) : null
+      date: date ? moment(date) : null // Should move date to redux
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -92,19 +94,9 @@ class Schedule extends Component {
   }
 
   async handleSubmit() {
-    const { title, description, place, date, attendees } = this.state;
-    const { user } = this.props;
-    // console.log(title, description, place, date.toLocaleString(), attendees);
-    const startDate = moment("10/01/2020", "DD/MM/YYYY");
-    const endDate = moment().endOf("month");
-    console.log(
-      "asd: ",
-      user.uid,
-      " sd:",
-      startDate.format("DD/MM/YYYY"),
-      " ed:",
-      endDate.format("DD/MM/YYYY")
-    );
+    const { title, description, place, date, attendees, mode } = this.state;
+    const { dispatch } = this.props;
+
     const params = {
       title,
       description,
@@ -113,24 +105,14 @@ class Schedule extends Component {
       attendees
     };
 
-    if (title && description && place && date) {
-      db.collection("events")
-        .add({
-          title,
-          description,
-          place,
-          date: new Date(date),
-          attendees
-        })
-        .then(function(docRef) {
-          console.log("Document written with ID: ", docRef.id);
-        })
-        .catch(function(error) {
-          console.error("Error adding document: ", error);
-        });
+    let response;
+    if (mode === "create") {
+      response = await dispatch(createEvent(params));
+    } else {
+      response = await dispatch(updateEvent(params));
     }
 
-    console.log("After query");
+    console.log(response);
   }
 
   render() {
@@ -267,6 +249,11 @@ Schedule.propTypes = {
 function mapStateToProps(state) {
   return {
     user: state.auth.user,
+    event: state.api.event,
+    isCreating: state.api.isCreating,
+    isUpdating: state.api.isUpdating,
+    createError: state.api.createError,
+    updateError: state.api.updateError,
     isLoggingOut: state.auth.isLoggingOut,
     logoutError: state.auth.logoutError
   };

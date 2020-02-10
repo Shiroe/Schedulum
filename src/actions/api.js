@@ -89,7 +89,10 @@ export const createEvent = params => dispatch => {
 
   db.collection("events")
     .add({ ...params })
-    .then(docRef => dispatch(receiveEventCreation(docRef))) //optimistic update
+    .then(docRef => {
+      dispatch(receiveEventCreation(docRef));
+      console.log("Created! :", docRef);
+    }) //optimistic update
     .catch(() => dispatch(errorEventCreation()));
 };
 
@@ -99,6 +102,9 @@ export const updateEvent = ({ id, ...rest }) => dispatch => {
   db.collection("events")
     .doc(id)
     .set({ id, ...rest })
-    .then(docRef => dispatch(receiveEventUpdate(docRef))) //optimistic update
+    .then(docRef => {
+      dispatch(receiveEventUpdate(docRef));
+      console.log("Updated! :", docRef);
+    }) //optimistic update
     .catch(() => dispatch(errorEventUpdate()));
 };
