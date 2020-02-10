@@ -1,4 +1,4 @@
-import { myFirebase, db } from "../firebase/firebase";
+import { db } from "../firebase/firebase";
 
 export const FETCH_EVENTS_REQUEST = "FETCH_EVENTS_REQUEST";
 export const FETCH_EVENTS_SUCCESS = "FETCH_EVENTS_SUCCESS";
@@ -37,10 +37,10 @@ const requestEventCreation = () => {
   };
 };
 
-const receiveEventCreation = events => {
+const receiveEventCreation = event => {
   return {
     type: CREATE_EVENT_SUCCESS,
-    events
+    event
   };
 };
 
@@ -56,10 +56,10 @@ const requestEventUpdate = () => {
   };
 };
 
-const receiveEventUpdate = events => {
+const receiveEventUpdate = event => {
   return {
     type: UPDATE_EVENT_SUCCESS,
-    events
+    event
   };
 };
 
@@ -89,24 +89,16 @@ export const createEvent = params => dispatch => {
 
   db.collection("events")
     .add({ ...params })
-    .then(docRef => dispatch(receiveEventCreation(params))) //optimistic update
-    .catch(error => dispatch(errorEventCreation()));
+    .then(docRef => dispatch(receiveEventCreation(docRef))) //optimistic update
+    .catch(() => dispatch(errorEventCreation()));
 };
 
-export const updateEvent = params => dispatch => {
+export const updateEvent = ({ id, ...rest }) => dispatch => {
   dispatch(requestEventUpdate());
-  // const { title, description, place, creatorId, date, attendees } = params;
 
-  // db.collection("events")
-  // .where("creatorId", "==", uid)
-  // .orderBy("date")
-  // .startAt(new Date(startDate))
-  // .endAt(new Date(endDate))
-  // .get()
-  // .then(snap => {
-  // dispatch(receiveEventUpdate(params));
-  // })
-  // .catch(error => {
-  // dispatch(errorEventUpdate());
-  // });
+  db.collection("events")
+    .doc(id)
+    .set({ id, ...rest })
+    .then(docRef => dispatch(receiveEventUpdate(docRef))) //optimistic update
+    .catch(() => dispatch(errorEventUpdate()));
 };

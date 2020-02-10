@@ -61,7 +61,6 @@ class Home extends Component {
         } else {
           console.log("No docs!");
         }
-        // dispatch(receiveEvents(snap ? snap.docs.map(d => d.data()) : []))
       })
       .catch(error => console.log(error));
   }
